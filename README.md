@@ -1,4 +1,4 @@
-# clairic-test
+# Email to Order Example with Clairic
 
 Synthetic data experiments for the [Cloudflare - Clairic AI](https://blog.cloudflare.com/clairic-extraction-model/)
 Clairic is a System One Extraction Model capable of extracting structured data from unstructured text.
