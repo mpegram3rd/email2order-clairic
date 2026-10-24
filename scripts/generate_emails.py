@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import random
 import re
 import sys
 import time
@@ -22,7 +23,7 @@ DATA_DIR = REPO_ROOT / "data"
 PROMPTS_DIR = REPO_ROOT / "prompts"
 DEFAULT_PROMPT = "email-generation"
 DEFAULT_MODEL = "gpt-4o-mini"
-DEFAULT_TEMPERATURE = 0.85 # Juice the creativity a bit
+DEFAULT_TEMPERATURE = 0.90 # Juice the creativity a bit
 
 # General guidance on email generation: Plaintext and all dates need to be in the future from the run date
 DEFAULT_SYSTEM_PROMPT = (
@@ -92,8 +93,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--temperature",
         type=float,
-        default=0.85,
-        help="sampling temperature (default: 0.85)",
+        default=DEFAULT_TEMPERATURE,
+        help=f"sampling temperature (default: {DEFAULT_TEMPERATURE})",
     )
     parser.add_argument(
         "--model",
@@ -154,7 +155,7 @@ def generate_one(
                 {"role": "system", "content": settings["system_prompt"]},
                 {"role": "user", "content": prompt},
             ],
-            temperature=settings["temperature"],
+            temperature=settings["temperature"]
         )
     except OpenAIError as exc:
         fail(f"API request failed: {exc}")

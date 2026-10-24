@@ -1,6 +1,6 @@
 Write a single, realistic business email from the procurement department of a
 mid-sized company to a supplier. The email should place a purchase order for
-1-5 items.
+one to five items.
 
 Requirements:
 - Use a plain "Subject:" line followed by the message body.
@@ -17,7 +17,7 @@ Requirements:
 
 Invent plausible but fictional companies, people, addresses, and product
 catalog numbers. Do not reuse the details from any example you have seen.
-Vary the tone, length, and formatting between emails.  As any human would do, it is ok
-occasionally make mistakes and forget a single detail but do not do it every time.
+Vary the tone, length, and formatting between emails.  Vary the name of the company and the name of the person making the request.
+As any human would, it is ok to occasionally make mistakes and forget a single detail but do not do it every time.
 
 Return only the email text.
