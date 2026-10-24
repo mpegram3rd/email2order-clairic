@@ -1,0 +1,57 @@
+{
+  "model": "clairic",
+  "state": "Add email content here",
+  "fields": {
+    "contact_name": {
+      "type": "text",
+      "instructions": "The name of the person who placed the order"
+    },
+    "contact_phone": {
+      "type": "text"
+    },
+    "recipient_attention": {
+      "type": "text",
+      "instructions": "Recipients name. This might be in care of or attention to"
+    },
+    "receiving_company": {
+      "type": "text",
+      "instructions": "Receiving company name"
+    },
+    "receiving_street_address": {
+      "type": "text",
+      "instructions": "Receiving street address"
+    },
+    "receiving_city": {
+      "type": "text"
+    },
+    "receiving_state": {
+      "type": "text"
+    },
+    "receiving_zip_code": {
+      "type": "text"
+    },
+    "item_name": {
+      "type": "list",
+      "items": "text",
+      "instructions": "The name of the item being ordered. This should not include a model or part number"
+    },
+    "item_id": {
+      "type": "list",
+      "items": "text",
+      "instructions": "A model identifier or a part identifier. This can be a mix of numbers, letters and include hyphens and periods"
+    },
+    "item_quantity": {
+      "type": "list",
+      "items": "number",
+      "decimals": 0
+    },
+    "item_price": {
+      "type": "list",
+      "items": "number",
+      "decimals": 2
+    },
+    "expected_delivery_date": {
+      "type": "date"
+    }
+  }
+}
