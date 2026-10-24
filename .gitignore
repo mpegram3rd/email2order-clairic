@@ -10,7 +10,7 @@ wheels/
 .venv
 
 # Generated synthetic data
-data/
+*.txt
 
 # Jetbrains
 .idea/
