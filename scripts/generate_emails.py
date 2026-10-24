@@ -232,12 +232,13 @@ def main(argv: list[str] | None = None) -> int:
     out_dir = settings["out_dir"]
     written = 0
 
-    for index in range(1, int(settings["count"]) + 1):
+    how_many = positive_int(settings["count"])
+    for index in range(1, how_many + 1):
         timer = time.perf_counter_ns()
         body = generate_one(client, settings, prompt)
         path = write_email(out_dir, run_stamp, index, body)
         written += 1
-        print(f"wrote {path} in {(time.perf_counter_ns() - timer) / 1000000} ms")
+        print(f"({written} of {how_many}) - wrote {path} in {(time.perf_counter_ns() - timer) / 1000000} ms")
 
     print(f"{written} email(s) written to {out_dir}")
     return 0
