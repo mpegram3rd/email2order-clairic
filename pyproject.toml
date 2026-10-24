@@ -1,5 +1,5 @@
 [project]
-name = "clairic-test"
+name = "email2order-clairic"
 version = "0.1.0"
 description = "Synthetic email data generator and clairic extraction experiments"
 readme = "README.md"
