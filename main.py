@@ -1,7 +1,7 @@
 import json
 import os
 import time
-from typing import Optional, Dict, Any, List
+from typing import Dict, Any, List
 
 import requests
 from pathlib import Path

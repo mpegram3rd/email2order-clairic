@@ -36,7 +36,7 @@ DEFAULT_SYSTEM_PROMPT = (
     f"If you are generating multiple emails in one shot separate each with a clear divider of `{EMAIL_DELIMITER}`"
 )
 
-# This really shouldn't be needed but can't hurt.  Will clean out any generated markdown style code.
+# This really shouldn't be needed but can't hurt.  Will clean out any generated Markdown style code.
 FENCE_RE = re.compile(r"^\s*```[a-zA-Z0-9_-]*\s*\n(.*?)\n?\s*```\s*$", re.DOTALL)
 
 def load_settings(args: argparse.Namespace) -> dict[str, object]:
@@ -127,7 +127,7 @@ def load_prompt(argument: str) -> str:
     return text
 
 
-def build_client(settings: dict[str, object]) -> OpenAI:
+def build_client(settings: dict[str, object]) -> OpenAI | None:
     """
     Constructs an OpenAI compatible client using the configuration from the settings.
 
@@ -156,6 +156,8 @@ def split_emails(text: str) -> List[str]:
     """
     return [segment.strip() for segment in text.split(EMAIL_DELIMITER) if segment.strip()]
 
+
+# noinspection bad-argument-type
 def generate_emails(
     client: OpenAI,
     settings: dict[str, object],
@@ -194,7 +196,7 @@ def generate_emails(
 
 
 def clean(text: str) -> str:
-    """Strip markdown code fences and surrounding blank lines."""
+    """Strip Markdown code fences and surrounding blank lines."""
     match = FENCE_RE.match(text)
     if match:
         text = match.group(1)
@@ -219,7 +221,7 @@ def write_email(out_dir: Path, run_stamp: str, index: int, body: str) -> Path:
 
 def fail(message: str) -> None:
     """
-    Make app go 💥 with an error message.
+    Make the app go 💥 with an error message.
 
     :param message: The error message to display.
     :return: None
