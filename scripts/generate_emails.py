@@ -251,7 +251,7 @@ def main(argv: list[str] | None = None) -> int:
     prompt = load_prompt(args.prompt)
 
     print(f"Generating email using model: {settings['model']}")
-    print(f"Prompt:\n {prompt}\n------")
+    print(f"Prompt:\n{prompt}\n------")
     client = build_client(settings)
 
     run_stamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -262,10 +262,11 @@ def main(argv: list[str] | None = None) -> int:
     for index in range(1, how_many + 1):
         timer = time.perf_counter_ns()
         email_list = generate_emails(client, settings, prompt)
+        print(f"Email generation cycle {index} completed in {(time.perf_counter_ns() - timer) / 1000000} ms")
         for email_msg in email_list:
             written += 1
             path = write_email(out_dir, run_stamp, written, email_msg)
-        print(f"({written} of {how_many}) - wrote {path} in {(time.perf_counter_ns() - timer) / 1000000} ms")
+            print(f"- ({written} of {how_many}) - wrote {path}")
 
     print(f"{written} email(s) written to {out_dir}")
     return 0
