@@ -1,5 +1,5 @@
-Write a single, realistic business email from the procurement department of a
-mid-sized company to a supplier. The email should place a purchase order for
+Write 5 distinct, realistic business emails from the procurement department of a
+mid-sized company to a supplier. Each email should place a purchase order for
 one to five items.
 
 Requirements:
@@ -20,4 +20,4 @@ catalog numbers. Do not reuse the details from any example you have seen.
 Vary the tone, length, and formatting between emails.  Vary the name of the company and the name of the person making the request.
 As any human would, it is ok to occasionally make mistakes and forget a single detail but do not do it every time.
 
-Return only the email text.
+Return only the email text.   

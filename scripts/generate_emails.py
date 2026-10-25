@@ -8,12 +8,12 @@ from __future__ import annotations
 
 import argparse
 import os
-import random
 import re
 import sys
 import time
 from datetime import datetime
 from pathlib import Path
+from typing import List
 
 from dotenv import load_dotenv
 from openai import OpenAI, OpenAIError
@@ -24,6 +24,7 @@ PROMPTS_DIR = REPO_ROOT / "prompts"
 DEFAULT_PROMPT = "email-generation"
 DEFAULT_MODEL = "gpt-4o-mini"
 DEFAULT_TEMPERATURE = 0.90 # Juice the creativity a bit
+EMAIL_DELIMITER = "----"
 
 # General guidance on email generation: Plaintext and all dates need to be in the future from the run date
 DEFAULT_SYSTEM_PROMPT = (
@@ -32,6 +33,7 @@ DEFAULT_SYSTEM_PROMPT = (
     "or markdown formatting. Do not write HTML or Markdown, only plain text. "
     f"Today's date is {datetime.now().strftime('%Y-%m-%d')} "
     "so it is vitally important that any generated dates occur after that date."
+    f"If you are generating multiple emails in one shot separate each with a clear divider of `{EMAIL_DELIMITER}`"
 )
 
 # This really shouldn't be needed but can't hurt.  Will clean out any generated markdown style code.
@@ -104,8 +106,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--max-output-tokens",
         type=positive_int,
-        default=2048,
-        help="maximum tokens per response (default: 2048)",
+        default=10240,
+        help="maximum tokens per response (default: 10240)",
     )
     return parser.parse_args(argv)
 
@@ -126,6 +128,12 @@ def load_prompt(argument: str) -> str:
 
 
 def build_client(settings: dict[str, object]) -> OpenAI:
+    """
+    Constructs an OpenAI compatible client using the configuration from the settings.
+
+    :param settings:
+    :return:
+    """
     try:
         return OpenAI(
             api_key=settings["api_key"],
@@ -134,14 +142,29 @@ def build_client(settings: dict[str, object]) -> OpenAI:
     except OpenAIError as exc:
         fail(f"Could not create OpenAI client: {exc}")
 
+def split_emails(text: str) -> List[str]:
+    """
+    Splits a string containing email addresses into a list of individual email
+    addresses. The input string is split using a predefined delimiter, and each
+    segment is stripped of leading and trailing whitespace. Empty segments are
+    excluded from the result.
 
-def generate_one(
+    :param text: A string containing one or more email addresses separated by a
+        delimiter.
+    :return: A list of email addresses extracted from the input string.
+    :rtype: List[str]
+    """
+    return [segment.strip() for segment in text.split(EMAIL_DELIMITER) if segment.strip()]
+
+def generate_emails(
     client: OpenAI,
     settings: dict[str, object],
     prompt: str,
-) -> str:
+) -> List[str]:
     """
-    Generates a single email from the given prompt using the provided LLM client.
+    Generates parses the response looking for multiple email messages and extracts each distinct one into a list.
+    The given prompt drives the generation of the email messages.  The system prompt guides how they should be
+    delimited in the output.
 
     :param client:
     :param settings:
@@ -167,7 +190,7 @@ def generate_one(
     text = clean(choices[0].message.content)
     if not text:
         fail("API returned a response with no usable content.")
-    return text
+    return split_emails(text)
 
 
 def clean(text: str) -> str:
@@ -227,6 +250,8 @@ def main(argv: list[str] | None = None) -> int:
     settings = load_settings(args)
     prompt = load_prompt(args.prompt)
 
+    print(f"Generating email using model: {settings['model']}")
+    print(f"Prompt:\n {prompt}\n------")
     client = build_client(settings)
 
     run_stamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -236,9 +261,10 @@ def main(argv: list[str] | None = None) -> int:
     how_many = positive_int(settings["count"])
     for index in range(1, how_many + 1):
         timer = time.perf_counter_ns()
-        body = generate_one(client, settings, prompt)
-        path = write_email(out_dir, run_stamp, index, body)
-        written += 1
+        email_list = generate_emails(client, settings, prompt)
+        for email_msg in email_list:
+            written += 1
+            path = write_email(out_dir, run_stamp, written, email_msg)
         print(f"({written} of {how_many}) - wrote {path} in {(time.perf_counter_ns() - timer) / 1000000} ms")
 
     print(f"{written} email(s) written to {out_dir}")
