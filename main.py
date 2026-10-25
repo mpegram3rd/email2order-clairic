@@ -8,6 +8,8 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+from models import Order
+
 load_dotenv()
 ACCOUNT_ID = os.environ.get("CLOUDFLARE_ACCOUNT")
 AUTH_TOKEN = os.environ.get("CLOUDFLARE_AUTH_TOKEN")
@@ -57,6 +59,8 @@ def ask_clairic(prompt: Dict[str, Any], email: str):
     # TODO fix what we do after getting an answer
     print("Processing time (ms):", (time.perf_counter_ns() - processing_time) / 1000000)
     print(json.dumps(answers, indent=4))
+    order = Order.from_dict(answers)
+    return order
 
 def main() -> int:
     prompt = load_prompt()

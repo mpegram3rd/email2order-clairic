@@ -13,21 +13,21 @@
       "type": "text",
       "instructions": "Recipients name. This might be in care of or attention to"
     },
-    "receiving_company": {
+    "recipient_company": {
       "type": "text",
       "instructions": "Receiving company name"
     },
-    "receiving_street_address": {
+    "recipient_street_address": {
       "type": "text",
       "instructions": "Receiving street address"
     },
-    "receiving_city": {
+    "recipient_city": {
       "type": "text"
     },
-    "receiving_state": {
+    "recipient_state": {
       "type": "text"
     },
-    "receiving_zip_code": {
+    "recipient_zip_code": {
       "type": "text"
     },
     "item_name": {
