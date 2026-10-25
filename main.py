@@ -52,9 +52,11 @@ def ask_clairic(prompt: Dict[str, Any], email: str):
         json=prompt
     )
 
+    answers = response.json()["result"]["answers"]
+
     # TODO fix what we do after getting an answer
     print("Processing time (ms):", (time.perf_counter_ns() - processing_time) / 1000000)
-    print(json.dumps(response.json(), indent=4))
+    print(json.dumps(answers, indent=4))
 
 def main() -> int:
     prompt = load_prompt()
