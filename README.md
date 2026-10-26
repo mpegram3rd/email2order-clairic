@@ -122,6 +122,9 @@ empty in the output. These are:
 - `item_quantity`
 - `item_price`
 
+There is an argument to be made that if I wasn't working with such variety in the synthetic dataset for `item_id`, 
+we might be able to define a better `instruction` for the extraction AI to increase success in this area by 
+describing the format of the `item_id` field in the synthetic emails.  I'm leaving this an exercise for the reader.
 
 ## Project layout
 
