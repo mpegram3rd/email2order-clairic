@@ -15,11 +15,19 @@ This repo contains two things:
 - 
    - It can be run with `uv run generate --count {number of emails}`
 
+## Findings
+For most fields the Clairic AI did a good job extracting details, but importantly had some confusion with the 
+details related to individual items at time.  I tried to get it to extract `item_name` but it almost universally
+failed at extracting this field, often extracting more names than actual items.  This seemed to be confusion in
+how the AI was splitting the item detail lines generated in the emails, sometimes partially picking up the start of
+an item id as part of the name.  Prices, quantities, and item ids tended to be more reliable for extraction.
+
 ## Requirements
 
 - Python 3.13+
 - [uv](https://docs.astral.sh/uv/)
-- An API key for OpenAI or any OpenAI-compatible provider
+- An API key for OpenAI or any OpenAI-compatible provider (for email generation)
+- An Auth-token for [(Clairic)](https://developers.cloudflare.com/workers-ai/models/clairic/)
 
 ## Setup
 
@@ -43,26 +51,14 @@ OPENAI_MODEL=gpt-4o-mini
 # SYSTEM_PROMPT=You write realistic business emails.
 ```
 `CLOUDFLARE_ACCOUNT` is required for running the `main.py` app and using the [Cloudflare - Clairic](https://docs.astral.sh/clairic/) model
-`OPENAI_API_KEY` is the only required setting. The others fall back to
+`OPENAI_API_KEY` is the only required setting for OpenAI. The others fall back to
 `gpt-4o-mini`, the default OpenAI endpoint, and a built-in system message.
 
-## Writing a prompt
+## Prompt files
 
-The prompt file holds the user message. **One API call produces one email**, so
-ask for a single message and tell the model to return only the email text — no
-commentary, no preamble.
-
-The starter prompt lives at `prompts/email-generation.md` and describes a purchase-order email.
-
-
-> Please accept this email as a formal order for the following items:
->
-> Item: Ergonomic Desk Chair (Model #EC-100) — Quantity: 4 — Unit Price: $150.00
->
-> Have it delivered to: Acme Corporation, Attn: Jane Doe, Suite 400 ...
-
-Add more prompt files to `prompts/` if you want alternate scenarios; pass
-`--prompt <name>` to select one.
+There are 2 prompt files:
+- `prompts/email-generation.md` — This is used by the Email Generator to create a synthetic dataset for purchase emails.
+- `prompts/email-evaluation.json` — This is a [(Clairic)](https://developers.cloudflare.com/workers-ai/models/clairic/) prompt file extracting order-related information from emails.
 
 ## Generating emails
 
@@ -115,14 +111,29 @@ exits with status 1. Emails from earlier in the run stay on disk, so a failed
 run leaves `001.txt` … `00N.txt` for whatever succeeded before the failure.
 There are no automatic retries.
 
+## Using Clairic to extract order details from the emails
+The app in `main.py` iterates through the synthetic emails that have been generated over in the `data/` directory 
+one at a time and submits them to Clairic for order details extraction.  The data is mapped to the `Order` dataclass.
+The app does not include extensive data validation but will report if there is a mismatch in the extracted lengths
+of the three arrays that represent the order item details. If the sizes are mismatched, the `items list` will be
+empty in the output. These are:
+
+- `item_id`
+- `item_quantity`
+- `item_price`
+
+
 ## Project layout
 
 ```
 clairic-test/
 ├── prompts/
-│   └── email.txt               # user prompt, one email per call
+│   ├── email-evaluation.json   # Clairic prompt template for 
+│   └── email-generation.md     # LLM Prompt to generate synthetic emails
 ├── scripts/
 │   └── generate_emails.py      # the generator (installed as `generate`)
+├── models/
+│   └── order.py                # Dataclasses for order details
 ├── data/                       # generated output, gitignored
 └── main.py                     # clairic extraction request
 ```
