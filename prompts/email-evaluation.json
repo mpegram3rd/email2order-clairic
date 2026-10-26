@@ -30,11 +30,6 @@
     "recipient_zip_code": {
       "type": "text"
     },
-    "item_name": {
-      "type": "list",
-      "items": "text",
-      "instructions": "The name of the item being ordered. This should not include a model or part number"
-    },
     "item_id": {
       "type": "list",
       "items": "text",
@@ -48,7 +43,13 @@
     "item_price": {
       "type": "list",
       "items": "number",
+      "unit": "USD",
       "decimals": 2
+    },
+    "total_item_count": {
+      "type": "number",
+      "decimals": 0,
+      "instructions": "The sum of the item quantities"
     },
     "expected_delivery_date": {
       "type": "date"

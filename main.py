@@ -45,7 +45,6 @@ def find_email_list() -> List[str]:
 
 def ask_clairic(prompt: Dict[str, Any], email: str):
 
-    processing_time = time.perf_counter_ns()
     prompt["state"] = email
 
     response = requests.post(
@@ -56,9 +55,6 @@ def ask_clairic(prompt: Dict[str, Any], email: str):
 
     answers = response.json()["result"]["answers"]
 
-    # TODO fix what we do after getting an answer
-    print("Processing time (ms):", (time.perf_counter_ns() - processing_time) / 1000000)
-    print(json.dumps(answers, indent=4))
     order = Order.from_dict(answers)
     return order
 
@@ -66,13 +62,18 @@ def main() -> int:
     prompt = load_prompt()
     count = 0
     email_list = find_email_list()
+    total_processing_time = time.perf_counter_ns()
     for email_file in email_list:
         count += 1
         email = load_email(email_file)
-        if count == 1:
-            print(email)
-            print("--------------")
-            ask_clairic(prompt, email)
+
+        processing_time = time.perf_counter_ns()
+        order = ask_clairic(prompt, email)
+        print(f"File: {email_file}, Order: {order}")
+        print("Processing time (ms):", (time.perf_counter_ns() - processing_time) / 1000000)
+        print("------\n")
+
+    print(f"Total processing time for {count} orders in (ms): {(time.perf_counter_ns() - total_processing_time) / 1000000}")
 
     return 0
 
