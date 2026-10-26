@@ -67,7 +67,4 @@ class Order:
                 item = Item(id=item_id_list[i], quantity=item_quantity_list[i], price=item_price_list[i])
                 new_order.items.append(item)
 
-
-
         return new_order
-

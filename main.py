@@ -70,6 +70,8 @@ def main() -> int:
         processing_time = time.perf_counter_ns()
         order = ask_clairic(prompt, email)
         print(f"File: {email_file}, Order: {order}")
+        if len(order.items) == 0:
+            print("- Error: Mismatched item_id, item_price, and item_quantity lists")
         print("Processing time (ms):", (time.perf_counter_ns() - processing_time) / 1000000)
         print("------\n")
 
