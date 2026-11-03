@@ -129,7 +129,7 @@ describing the format of the `item_id` field in the synthetic emails.  I'm leavi
 ## Project layout
 
 ```
-clairic-test/
+email2order-clairic/
 ├── prompts/
 │   ├── email-evaluation.json   # Clairic prompt template for 
 │   └── email-generation.md     # LLM Prompt to generate synthetic emails
